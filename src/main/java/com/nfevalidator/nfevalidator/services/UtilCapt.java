@@ -2,7 +2,6 @@ package com.nfevalidator.nfevalidator.services;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.coyote.BadRequestException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,10 +11,12 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Service;
-
+import com.nfevalidator.nfevalidator.entity.CorpNFE;
 
 @Service
 public class UtilCapt {
+	
+	CorpNFE corp = new CorpNFE();
 	
 	public String WebDriverManager(String xml) throws Exception  {
 		
@@ -40,35 +41,36 @@ public class UtilCapt {
 			
 			//REGRA DE NEGOCIOS:
 			String titResult = document.selectXpath("//*[@id=\"resultado\"]/table//tr[1]/td").text();
+			corp.setTitResult(titResult);
 			String RespParserXml = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[1]").text();
+			corp.setRespParserXml(RespParserXml);
 			String tipMsmString = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[2]").text();
+			corp.setTipMsmString(tipMsmString);
 			String schValid = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[3]").text();											
+			corp.setSchValid(schValid);
 			
 			//VALIDAÇÃO NFE:
 			String titValidNfe = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/a/b").text();
+			corp.setTitValidNfe(titValidNfe);
 			String certUser = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[1]").text();
+			corp.setCertUser(certUser);
 			String validCert = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[2]/b").text();
+			corp.setValidCert(validCert);
 			
 			//REGRS DE NEG AMB PRODUÇÃO: 
 			String regNegProd = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[3]/div").text();
+			corp.setRegNegProd(regNegProd);
 			String probValida = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[3]/ul").text();	
-			
-			//RETIRA [Visualizar] DA VARIAVEL. 
-			String NcertUser = null;
-			if(certUser.contains("[Visualizar]"))
-			NcertUser = certUser.replace("[Visualizar]", " ");
-			
-			//PEGAR ERROS DE VALIDAÇÃO
-			String teString = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[3]/ul/li[1]").text();
+			corp.setProbValida(probValida);
 			
 			
+			List<String> errList = getMovs(document) ;
+			corp.setListErrs(errList);
 			
-			
-			
-			
-			
-			String montaResposta=(titResult+"\n"+RespParserXml+"\n"+tipMsmString+"\n"+schValid+"\n"+"\n"+titValidNfe+"\n"+NcertUser+"\n"+validCert+"\n"+"\n"+regNegProd+"\n");	
-			return montaResposta+getMovs(document);	
+			CorpNFE nfe = new CorpNFE(titResult,RespParserXml,tipMsmString,schValid,titValidNfe,certUser,validCert,
+			regNegProd,probValida,errList);
+			//+corp.getMovs(document)
+			return nfe.toString();
 			
 		} catch (Exception e) {
 			
@@ -81,16 +83,19 @@ public class UtilCapt {
 		
 	}
 	
-	 public List<String> getMovs(Document document) { 
-		 //String movimenta = null;
-		 List<String>movsList = new ArrayList<>();
+	public List<String> getMovs(Document document) { 
+		 
+		List<String>movsList = new ArrayList<>();
+		 
 		 int listElement = 1; 
 		 String linkString = "/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[3]/ul/li[";
 		  
 		  while (true) { 
 		  String listMov = document.selectXpath(linkString+listElement+"]").text(); 
 		  String recebe = document.selectXpath(linkString+(listElement+1)+"]").text();
+		 
 		  movsList.add(listMov+"\n");
+		  
 		  if( recebe.isEmpty()) {
 			break;
 		   
@@ -101,5 +106,7 @@ public class UtilCapt {
 		  }
 		  return movsList; 
 		  }
+	
+	
 	
 }

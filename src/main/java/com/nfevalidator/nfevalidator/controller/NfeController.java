@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.nfevalidator.nfevalidator.entity.ValidBody;
+import com.nfevalidator.nfevalidator.services.FilaReq;
 import com.nfevalidator.nfevalidator.services.UtilCapt;
 
 @RestController

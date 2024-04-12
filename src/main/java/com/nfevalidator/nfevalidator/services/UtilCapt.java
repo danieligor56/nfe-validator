@@ -6,12 +6,14 @@ import org.apache.coyote.BadRequestException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Service;
 import com.nfevalidator.nfevalidator.entity.CorpNFE;
+
 
 @Service
 public class UtilCapt {
@@ -23,7 +25,7 @@ public class UtilCapt {
 		System.setProperty("webdriver.chrome.driver","src/main/resources/chromedriver.exe");
 		
 		ChromeOptions options = new ChromeOptions();
-		options.addArguments("--headless", "--ignore-certificate-errors");
+		options.addArguments( "headless","--ignore-certificate-errors");
 		WebDriver driver = new ChromeDriver(options);
 		
 		try {
@@ -31,7 +33,8 @@ public class UtilCapt {
 			driver.get("https://www.sefaz.rs.gov.br/nfe/nfe-val.aspx");
 			
 			WebElement insertXML = driver.findElement(By.id("txtxml"));
-			insertXML.sendKeys(xml);
+			
+			((JavascriptExecutor) driver).executeScript("arguments[0].value = arguments[1]", insertXML, xml);
 		
 			WebElement validButton = driver.findElement(By.xpath("//*[@id=\"btnvalidar\"]"));
 			validButton.click();

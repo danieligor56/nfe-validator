@@ -14,13 +14,16 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Service;
 import com.nfevalidator.nfevalidator.entity.CorpNFE;
 
+import lombok.experimental.var;
+
+
 
 @Service
 public class UtilCapt {
 	
 	CorpNFE corp = new CorpNFE();
 	
-	public String WebDriverManager(String xml) throws Exception  {
+	public CorpNFE WebDriverManager(String xml) throws Exception  {
 		
 		System.setProperty("webdriver.chrome.driver","src/main/resources/chromedriver.exe");
 		
@@ -43,37 +46,56 @@ public class UtilCapt {
 			Document document = Jsoup.parse(pageSource);
 			
 			//REGRA DE NEGOCIOS:
+			
 			String titResult = document.selectXpath("//*[@id=\"resultado\"]/table//tr[1]/td").text();
 			corp.setTitResult(titResult);
-			String RespParserXml = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[1]").text();
-			corp.setRespParserXml(RespParserXml);
+			
+			//PARSE XML
+			String respParserXml = document.selectXpath("//*[@id=\"resultado\"]/table//tr[2]/td/ul/li[1]").text();
+			String editParseXml = respParserXml.substring(respParserXml.indexOf(": ") + 2);
+			
+			//TIPO DE MENSAGEM
 			String tipMsmString = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[2]").text();
-			corp.setTipMsmString(tipMsmString);
+			String editTipMsm = tipMsmString.substring(tipMsmString.indexOf(": ") + 2);
+			
+			//SCHEMA XML
 			String schValid = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[3]").text();											
-			corp.setSchValid(schValid);
+			String ediSchValid = schValid.substring(schValid.indexOf(": ")+ 2);
 			
 			//VALIDAÇÃO NFE:
 			String titValidNfe = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/a/b").text();
-			corp.setTitValidNfe(titValidNfe);
-			String certUser = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[1]").text();
-			corp.setCertUser(certUser);
+			
+			/*
+			 * String certUser = document.selectXpath(
+			 * "/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[1]"
+			 * ).text(); corp.setCertUser(certUser);
+			 */
+			//VALIDADE DA CHAVE DIGITAL
 			String validCert = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[2]/b").text();
-			corp.setValidCert(validCert);
+			String editValidCert = validCert.substring(validCert.indexOf(": ")+ 2);
 			
 			//REGRS DE NEG AMB PRODUÇÃO: 
 			String regNegProd = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[3]/div").text();
-			corp.setRegNegProd(regNegProd);
-			String probValida = document.selectXpath("/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[3]/ul").text();	
-			corp.setProbValida(probValida);
+			String editRegNegProd = regNegProd.substring(regNegProd.indexOf("] ")+ 2);
+			
+			if(editRegNegProd.contains("Produção")) {
+				String regNegocios = editRegNegProd + " (Ambiente de produção)";
+			}
+				String regNegocios = editRegNegProd + " (Ambiente de homologação)";
+			
+			/*
+			 * String probValida = document.selectXpath(
+			 * "/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[3]/ul"
+			 * ).text(); corp.setProbValida(probValida);
+			 */
 			
 			
 			List<String> errList = getMovs(document) ;
 			corp.setListErrs(errList);
 			
-			CorpNFE nfe = new CorpNFE(titResult,RespParserXml,tipMsmString,schValid,titValidNfe,certUser,validCert,
-			regNegProd,probValida,errList);
-			//+corp.getMovs(document)
-			return nfe.toString();
+			CorpNFE nfe = new CorpNFE(titResult,editParseXml,editTipMsm,ediSchValid,titValidNfe,editValidCert,regNegocios,errList);
+			
+			return nfe;
 			
 		} catch (Exception e) {
 			

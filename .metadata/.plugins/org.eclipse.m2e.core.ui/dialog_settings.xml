@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="MavenProjectImportWizardPage">
+		<list key="rootDirectory">
+			<item value="C:\Users\Odin\Documents\Projetos\nfe-validator"/>
+			<item value="C:\Users\Odin\Documents\Projetos\multi-tenant-app-demo-master"/>
+			<item value="C:\Users\Odin\Documents\Projetos\TecnoDesk"/>
+			<item value="C:\Users\Odin\Documents\Projetos\test-tecnico-attus"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+</section>

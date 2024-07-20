@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="selection" value="if (osDTO.getColaborador().getOcupacao() != Ocupacao.TECNICO) {"/>
+		<list key="findhistory">
+			<item value="if (osDTO.getColaborador().getOcupacao() != Ocupacao.TECNICO) {"/>
+			<item value="&#x0D;&#x0A;&#x09;@Override&#x0D;&#x0A;&#x09;public void addInterceptors(InterceptorRegistry registry) {&#x0D;&#x0A;&#x09;&#x09;registry.addInterceptor(new TenantInterceptor());&#x0D;&#x0A;&#x09;}"/>
+			<item value="@Override"/>
+			<item value="String tenantId = serverName.substring(0, serverName.indexOf(&quot;.&quot;));"/>
+			<item value="@PreUpdate"/>
+			<item value="List&lt;Colaborador&gt;findAll();"/>
+			<item value="@Query(&quot;SELECT c From Colaborador c WHERE c.empresa = :id&quot;)"/>
+		</list>
+	</section>
+</section>

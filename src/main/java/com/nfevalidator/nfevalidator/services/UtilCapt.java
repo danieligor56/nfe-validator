@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.nfevalidator.nfevalidator.entity.CorpNFE;
 
@@ -20,6 +21,9 @@ import lombok.experimental.var;
 
 @Service
 public class UtilCapt {
+	
+	@Autowired
+	AiIntegration aiIntegration;
 	
 	CorpNFE corp = new CorpNFE();
 	
@@ -83,17 +87,23 @@ public class UtilCapt {
 			}
 				String regNegocios = editRegNegProd + " (Ambiente de homologação)";
 			
-			/*
-			 * String probValida = document.selectXpath(
-			 * "/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[3]/ul"
-			 * ).text(); corp.setProbValida(probValida);
-			 */
+			
+			  String probValida = document.selectXpath(
+			  "/html/body/div[2]/form/table//tr[1]/td/table//tr/td[2]/div/div[2]/div/table//tr[2]/td/div/div[1]/span[2]/table//tr[2]/td/ul/li[4]/ul/li[3]/ul"
+			  ).text();
+			 
 			
 			
 			List<String> errList = getMovs(document) ;
 			corp.setListErrs(errList);
 			
-			CorpNFE nfe = new CorpNFE(titResult,editParseXml,editTipMsm,ediSchValid,titValidNfe,editValidCert,regNegocios,errList);
+			
+			
+			String documentationResponse = aiIntegration.callApi(probValida);
+			
+			
+			
+			CorpNFE nfe = new CorpNFE(titResult,editParseXml,editTipMsm,ediSchValid,titValidNfe,editValidCert,regNegocios,errList,documentationResponse);
 			
 			return nfe;
 			

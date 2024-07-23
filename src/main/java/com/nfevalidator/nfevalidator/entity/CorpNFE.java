@@ -22,6 +22,7 @@ public class CorpNFE {
 	private String regNegProd;
 	/* private String probValida; */
 	private List<String> listErrs;
+	private String documentationResponse;
 	
 	/*
 	 * public String retiraVisual(String texto) {

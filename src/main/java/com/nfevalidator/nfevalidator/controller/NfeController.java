@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.nfevalidator.nfevalidator.services.AiIntegration;
+import com.nfevalidator.nfevalidator.services.AiIntegration;
 import com.nfevalidator.nfevalidator.services.UtilCapt;
 
 @RestController
@@ -18,14 +20,24 @@ public class NfeController {
 	
 	@Autowired
 	UtilCapt util;
+	 
 	
-	
+	 
 	@PostMapping("/xmlnfe=/")
 	@CrossOrigin(origins = "http://localhost:4200")
 	public ResponseEntity recXmlNfe(@RequestBody String xml) throws BadRequestException, Exception {
 		
 		return  ResponseEntity.ok().body(util.WebDriverManager(xml));
 	}
+	
+	
+	/*
+	 * @GetMapping("/prompt") public String getResponse(RequestBody String) { return
+	 * aiIntegration.callApi(prompt);
+	 * 
+	 * }
+	 */
+	 
 	
 
 	
